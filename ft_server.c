@@ -6,38 +6,52 @@
 /*   By: ide-spir <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/01 13:04:22 by ide-spir          #+#    #+#             */
-/*   Updated: 2022/07/01 13:19:04 by ide-spir         ###   ########.fr       */
+/*   Updated: 2022/07/01 16:11:25 by ide-spir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
-#include <stdio.h>
+#include <unistd.h>
 #include "libft/libft.h"
 
-void	ft_server(int sig)
+static void	action(int sig, siginfo_t *info, void *context)
 {
-	static unsigned char	x;
-	static int				i;
+	static int				i = 0;
+	static pid_t			client_pid = 0;
+	static unsigned char	c = 0;
 
-	if (sig == SIGUSR1)
-		x = x | 1;
-	i++;
-	if (i == 8)
+	(void)context;
+	if (!client_pid)
+		client_pid = info->si_pid;
+	c |= (sig == SIGUSR2);
+	if (++i == 8)
 	{
-		ft_putchar_fd(x, 1);
-		x = 0;
 		i = 0;
+		if (!c)
+		{
+			kill(client_pid, SIGUSR2);
+			client_pid = 0;
+			return ;
+		}
+		ft_putchar_fd(c, 1);
+		c = 0;
+		kill(client_pid, SIGUSR1);
 	}
-	x = x << 1;
+	else
+		c <<= 1;
 }
 
 int	main(void)
 {
-	ft_putstr_fd("Server PID:", 1);
+	struct sigaction	s_sigaction;
+
+	ft_putstr_fd("Server PID: ", 1);
 	ft_putnbr_fd(getpid(), 1);
 	ft_putchar_fd('\n', 1);
-	signal(SIGUSR1, ft_server);
-	signal(SIGUSR2, ft_server);
+	s_sigaction.sa_sigaction = action;
+	s_sigaction.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &s_sigaction, 0);
+	sigaction(SIGUSR2, &s_sigaction, 0);
 	while (1)
 		pause();
 	return (0);

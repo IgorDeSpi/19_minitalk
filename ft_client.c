@@ -6,41 +6,68 @@
 /*   By: ide-spir <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/01 11:39:01 by ide-spir          #+#    #+#             */
-/*   Updated: 2022/07/01 13:21:44 by ide-spir         ###   ########.fr       */
+/*   Updated: 2022/07/01 16:15:51 by ide-spir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "libft/libft.h"
 
-void	ft_client(int pid, char *str)
+static void	action(int sig)
 {
-	int	zero;
+	static int	received;
 
-	while (*str)
+	received = 0;
+	if (sig == SIGUSR1)
+		++received;
+	else
 	{
-		zero = 7;
-		while (zero >= 0)
-		{
-			if (*str >> zero & 1)
-				kill(pid, SIGUSR1);
-			else
-				kill(pid, SIGUSR2);
-			usleep(100);
-			zero--;
-		}
-		str++;
+		ft_putnbr_fd(received, 1);
+		ft_putchar_fd('\n', 1);
+		exit(0);
 	}
 }
 
-int	main(int args, char **argv)
+static void	ft_kill(int pid, char *str)
 {
-	int	pid;
+	int		i;
+	char	c;
 
-	if (args == 3)
+	while (*str)
 	{
-		pid = ft_atoi(argv[1]);
-		ft_client(pid, argv[2]);
+		i = 8;
+		c = *str++;
+		while (i--)
+		{
+			if (c >> i & 1)
+				kill(pid, SIGUSR2);
+			else
+				kill(pid, SIGUSR1);
+			usleep(100);
+		}
 	}
+	i = 8;
+	while (i--)
+	{
+		kill(pid, SIGUSR1);
+		usleep(100);
+	}
+}
+
+int	main(int argc, char **argv)
+{
+	if (argc != 3 || ft_strlen(argv[2]))
+		return (1);
+	ft_putstr_fd("Sent : ", 1);
+	ft_putnbr_fd(ft_strlen(argv[2]), 1);
+	ft_putchar_fd('\n', 1);
+	ft_putstr_fd("Received : ", 1);
+	signal(SIGUSR1, action);
+	signal(SIGUSR2, action);
+	ft_kill(ft_atoi(argv[1]), argv[2]);
+	while (1)
+		pause();
 	return (0);
 }

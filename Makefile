@@ -6,38 +6,41 @@
 #    By: ide-spir <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/01 12:54:02 by ide-spir          #+#    #+#              #
-#    Updated: 2022/07/01 13:34:24 by ide-spir         ###   ########.fr        #
+#    Updated: 2022/07/01 16:07:45 by ide-spir         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SERVER = server
-CLIENT = client
-cc = gcc
-LIBFT = libft/libft.a
+SRC = ft_server.c \
+	ft_client.c
+
+OBJS = $(SRC:.c=.o)
+
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-SRC_S = ft_server.c
-SRC_C = ft_client.c
-INCLUDE = -I libft/.
 
-all: $(LIBFT) $(SERVER) $(CLIENT)
+all: server client
 
-$(SERVER):
-	@$(CC) $(CFLAGS) $(LIBFT) ft_server.c -o server
+bonus: server client
 
-$(CLIENT):
-	@$(CC) $(CFLAGS) $(LIBFT) ft_client.c -o client
+server: ft_server.o libft
+	$(CC) -o $@ $< -Llibft -lft
 
-$(LIBFT):
-	@make -C libft
+client: ft_client.o libft
+	$(CC) -o $@ $< -Llibft -lft
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $?
+
+libft:
+	make -C libft
 
 clean:
-	@make clean -C libft
+	rm -f $(OBJS)
+	make -C libft clean
 
 fclean: clean
-	@make fclean -C libft
-	@rm -rf $(SERVER)
-	@rm -rf $(CLIENT)
+	rm -f server client libft/libft.a
 
 re: fclean all
 
-.PHONY: re clean fclean all
+.PHONY: all bonus libft clean fclean re
