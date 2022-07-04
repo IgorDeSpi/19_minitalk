@@ -6,7 +6,7 @@
 /*   By: ide-spir <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/01 11:39:01 by ide-spir          #+#    #+#             */
-/*   Updated: 2022/07/01 16:15:51 by ide-spir         ###   ########.fr       */
+/*   Updated: 2022/07/04 10:40:55 by ide-spir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,8 @@
 
 static void	action(int sig)
 {
-	static int	received;
+	static int	received = 0;
 
-	received = 0;
 	if (sig == SIGUSR1)
 		++received;
 	else
@@ -58,7 +57,7 @@ static void	ft_kill(int pid, char *str)
 
 int	main(int argc, char **argv)
 {
-	if (argc != 3 || ft_strlen(argv[2]))
+	if (argc != 3 || !ft_strlen(argv[2]))
 		return (1);
 	ft_putstr_fd("Sent : ", 1);
 	ft_putnbr_fd(ft_strlen(argv[2]), 1);
