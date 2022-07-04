@@ -6,7 +6,7 @@
 #    By: ide-spir <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/01 12:54:02 by ide-spir          #+#    #+#              #
-#    Updated: 2022/07/04 14:33:10 by ide-spir         ###   ########.fr        #
+#    Updated: 2022/07/04 16:12:06 by ide-spir         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,8 @@ libft:
 	@make -C libft
 
 clean:
-	@rm -f $(OBJS)
 	@make -C libft clean
+	@rm -f $(OBJS)
 
 fclean: clean
 	@rm -f server client libft/libft.a
