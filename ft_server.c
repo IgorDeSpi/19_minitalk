@@ -6,7 +6,7 @@
 /*   By: ide-spir <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/01 13:04:22 by ide-spir          #+#    #+#             */
-/*   Updated: 2022/07/01 16:11:25 by ide-spir         ###   ########.fr       */
+/*   Updated: 2022/07/04 15:54:02 by ide-spir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	action(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (!client_pid)
 		client_pid = info->si_pid;
-	c |= (sig == SIGUSR2);
+	c += (sig == SIGUSR2);
 	if (++i == 8)
 	{
 		i = 0;
